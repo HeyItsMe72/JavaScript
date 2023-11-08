@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=100, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>EJERCICIO 8.24</h1>
+</body>
+<script>
+    const ordenar = (array) => {
+    if(!array) return console.warn("No introduciste el arreglo.");
+    if(!(array instanceof Array)) return console.error("No es un arreglo.");
+    for(let num of array) {
+        if (typeof num !== "number") return console.error(`"El valor "${num}" no es un número."`)
+    }
+    let ascendente = [], descendente = []; 
+    ascendente = array.toSorted((a, b) => a - b);
+    descendente = array.toSorted((a, b) => b - a);
+    return console.info(`El array ${array} en orden ascendente: ${ascendente}.
+    Descendente: ${descendente}.`);
+}
+
+ordenar([21, 2, 45, 8]);
+</script>
+</html>
