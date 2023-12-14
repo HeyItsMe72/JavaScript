@@ -1,0 +1,81 @@
+{
+  "usuarios": [
+    {
+      "usuario": "Lucía72",
+      "email": "c.luciaest.72@gmail.com",
+      "id": 1
+    },
+    {
+      "id": 2,
+      "usuario": "Andrómeda52",
+      "email": "andromeda52@gmail.com"
+    },
+    {
+      "id": 3,
+      "usuario": "Julio35",
+      "email": "julio35.72@gmail.com"
+    },
+    {
+      "id": 4,
+      "usuario": "Silvia68",
+      "email": "silvia68@gmail.com"
+    },
+    {
+      "id": 5,
+      "usuario": "David90",
+      "email": "david90@gmail.com"
+    },
+    {
+      "usuario": "Chiquis",
+      "email": "chiquis.90@gmail.com",
+      "id": 6
+    },
+    {
+      "usuario": "Skrapy",
+      "email": "skrapy.90@gmail.com",
+      "id": 7
+    },
+    {
+      "usuario": "Bichito",
+      "email": "bichis90@gmail.com",
+      "id": 9
+    },
+    {
+      "usuario": "Pudi",
+      "email": "pudi@gmail.com",
+      "id": 10
+    }
+  ],
+  "metas": [
+    {
+      "id": 1,
+      "nombre": "Correr",
+      "detalles": "Correr 15 minutos diario"
+    },
+    {
+      "id": 2,
+      "nombre": "Leer",
+      "detalles": "Leer 20 minutos diario"
+    },
+    {
+      "id": 1,
+      "nombre": "Programar",
+      "detalles": "Programar 4 días a la semana"
+    },
+    {
+      "id": 1,
+      "nombre": "Escribir",
+      "detalles": "Escribir una vez a la semana"
+    },
+    {
+      "id": 1,
+      "nombre": "Ahorrar",
+      "detalles": "Ahorrar 10 pesos diarios"
+    },
+    {
+      "id": 1,
+      "nombre": "Comer",
+      "detalles": "Comer tres veces al día"
+    }
+  ]
+}

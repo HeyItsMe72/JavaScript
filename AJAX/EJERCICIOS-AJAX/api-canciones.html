@@ -1,0 +1,121 @@
+<!-- Las APIs usadas en este ejercicio ya no se encuentran disponibles. 
+Sin embargo, el ejercicio puede servir para el estudio de la estructura 
+lógica en el uso de más de una API. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de canciones</title>
+    <style>
+        html {
+            font-family: 'Lucida Sans', sans-serif;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        main {
+            display: flex;
+            flex-direction: column-reverse;
+        }
+        .song blockquote{
+            white-space: pre-wrap;
+        }
+        .loader {
+            display: none;
+            margin: auto;
+        }
+
+        @media screen and (min-width: 800px) {
+            main {
+                flex-direction: row;
+            }
+            main > * {
+                padding: 1rem;
+                flex-basis: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Buscador de canciones</h1>
+    <form id="song-search">
+        <input type="text" name="artist" placeholder="Artista" required>
+        <br>
+        <input type="text" name="song" placeholder="Canción" required>
+        <br>
+        <input type="submit" value="Buscar">
+    </form>
+    <img src="assets/loader.svg" class="loader" alt="Cargando...">
+    <aside class="error"></aside>
+    <main>
+        <article class="artist"></article>
+        <article class="song"></article>
+    </main>
+
+    <script>
+        const d = document,
+        $form = d.getElementById("song-search"),
+        $loader = d.querySelector(".loader"),
+        $error = d.querySelector(".error"),
+        $main = d.querySelector("main"),
+        $artist = d.querySelector(".artist"),
+        $song = d.querySelector(".song");
+
+        $form.addEventListener("submit", async e => {
+            e.preventDefault();
+
+            try {
+                $loader.style.display = "block";
+                let artist = e.target.artist.value.toLowerCase(),
+                song = e.target.song.value.toLowerCase(),
+                $artistTemplate = "", 
+                $songTemplate = "",
+                artistAPI = `https://theaudiodb.com/api/v1/json/2/search.php?s=${artist}`, 
+                songAPI = `https://api.lyrics.ovh/v1/${artist}/${song}`,
+                artistFetch = fetch(artistAPI),
+                songFetch = fetch(songAPI);
+
+                //Destructuración
+                [artistRes, songRes] = await Promise.all([artistFetch, songFetch]),
+                artistData = await artistRes.json(),
+                songData = await songRes.json();
+
+                console.log(artistRes, songRes);
+                console.log(artistData, songData);
+
+                //Validar ambas APIs
+                if(artistData.artists === null){
+                    $artistTemplate = `<h2>No existe el intérprete <mark>${artist}</mark></h2>`;
+                }else{
+                    let artist = artistData.artists[0];
+                    $artistTemplate = `
+                    <h2>${artist.strArtist}</h2>
+                    <img src="${artist.strArtistThumb}" alt="${artist.strArtist}">
+                    <p>${artist.intBornYear} - ${(artist.intDiedYear || "Present")}</p>`;    
+                }
+
+                if(songData.error){
+                    $songTemplate = `<h2>No existe la canción <mark>${song}</mark></h2>`;
+                }else{
+                    $songTemplate = `
+                    <h2>${song.toUpperCase()}</h2>
+                    <blockquote>${songData.lyrics}</blockquote>`;
+                }
+                //Agregar el contenido al HTML
+                $loader.style.display = "none";
+                $artist.innerHTML = $artistTemplate;
+                $song.innerHTML = $songTemplate;
+
+            } catch (err) {
+                console.log(err);
+                $loader.style.display = "none"; 
+                let $message = err.statusText || "Ocurrió un error";
+                $error.innerHTML = `<p>Error ${err.status}: ${$message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

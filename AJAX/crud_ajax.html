@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD API REST AJAX</title>
+</head>
+
+<body>
+    <h1>CRUD API REST AJAX</h1>
+    <section id="crud">
+        <article>
+            <h2 class="crud-title">Agregar Usuario</h2>
+            <form class="crud-form">
+                <input type="text" name="usuario" placeholder="Nombre de usuario" required>
+                <br>
+                <input type="text" name="email" placeholder="Correo electrónico" required>
+                <br>
+                <input type="submit" value="Enviar">
+                <input type="hidden" name="id">
+            </form>
+        </article>
+        <article>
+            <h2>Ver usuarios</h2>
+            <table class="crud-table">
+                <thead>
+                    <tr>
+                        <th>Nombre de Usuario</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </article>
+    </section>
+    <template id="crud-template">
+        <tr>
+            <td class="user"></td>
+            <td class="email"></td>
+            <td>
+                <button class="edit">Editar</button>
+                <button class="delete">Eliminar</button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        const d = document,
+            $table = d.querySelector(".crud-table"),
+            $form = d.querySelector(".crud-form"),
+            $title = d.querySelector(".crud-title"),
+            $template = d.getElementById("crud-template").content,
+            $fragment = d.createDocumentFragment();
+
+        //Función expresada
+        const ajax = (options) => {
+            let { url, method, success, error, data } = options;
+
+            //Paso 1: Crear una estancia del objeto XMLHttpRequest
+            const xhr = new XMLHttpRequest();
+
+            //Paso 2: Asignar un listener
+            xhr.addEventListener("readystatechange", e => {
+                if (xhr.readyState !== 4) return;
+
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    let json = JSON.parse(xhr.responseText);
+                    success(json);
+                } else {
+                    let message = xhr.statusText || "Ocurrió un error";
+                    error(`Error ${xhr.status}: ${message}`);
+                }
+            });
+
+            //Paso 3: Abrir (método, url)
+            xhr.open(method || "GET", url);
+            //Asignar la cabecera para saber el tipo de texto enviado
+            xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+            //Paso 4 Enviar. Convertir a texto plano el objeto json
+            xhr.send(JSON.stringify(data));
+        }
+        const getAll = () => {
+            ajax({
+                method: "GET",
+                url: "http://localhost:3000/usuarios",
+                success: (res) => {
+                    res.forEach(el => {
+                        $template.querySelector(".user").textContent = el.usuario;
+                        $template.querySelector(".email").textContent = el.email;
+                        $template.querySelector(".edit").dataset.id = el.id;
+                        $template.querySelector(".edit").dataset.user = el.usuario;
+                        $template.querySelector(".edit").dataset.email = el.email;
+                        $template.querySelector(".delete").dataset.id = el.id;
+                        let $clone = d.importNode($template, true);
+                        $fragment.appendChild($clone);
+                    });
+                    $table.querySelector("tbody").appendChild($fragment);
+                },
+                error: (err) => {
+                    console.error(err);
+                    $table.insertAdjacentHTML("afterend",
+                        `<p><b>${err}</b></p>`);
+                },
+                data: null
+            });
+        }
+        d.addEventListener("DOMContentLoaded", getAll);
+
+        d.addEventListener("submit", e => {
+            if (e.target === $form) {
+                e.preventDefault();
+
+                if (!e.target.id.value) {
+                    //Create POST 
+                    ajax({
+                        url: "http://localhost:3000/usuarios",
+                        method: "POST",
+                        success: (res) => location.reload(),
+                        error: () => $form.insertAdjacentHTML("afterend", `<p><b>${err}</b></p>`),
+                        data: {
+                            usuario: e.target.usuario.value,
+                            email: e.target.email.value
+                        }
+                    });
+                } else {//Update PUT
+                    ajax({
+                        url: `http://localhost:3000/usuarios/${e.target.id.value}`,
+                        method: "PUT",
+                        success: (res) => location.reload(),
+                        error: () => $form.insertAdjacentHTML("afterend", `<p><b>${err}</b></p>`),
+                        data: {
+                            usuario: e.target.usuario.value,
+                            email: e.target.email.value
+                        }
+                    });
+                }
+            }
+        });
+        d.addEventListener("click", e => {
+            if (e.target.matches(".edit")) {
+                $title.textContent = "Editar Usuario";
+                $form.usuario.value = e.target.dataset.user;
+                $form.email.value = e.target.dataset.email;
+                $form.id.value = e.target.dataset.id;
+            }
+            if (e.target.matches(".delete")) {
+                let isDelete = confirm(`¿Estás seguro de eliminar el id ${e.target.dataset.id}?`);
+
+                if(isDelete) {
+                    ajax({
+                        url: `http://localhost:3000/usuarios/${e.target.dataset.id}`,
+                        method: "DELETE", 
+                        success: (res) => location.reload(), 
+                        error: () => alert(err)
+                    });
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>
