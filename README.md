@@ -4,7 +4,7 @@ Cada ejercicio básico comienza con un comentario que describe brevemente lo que
 Son, básicamente, ejercicios de lógica de programación. 
 
 # Todos los ejercicios incluyen validaciones básicas de los datos que pueden ser ingresados a las funciones. En caso de que sean incorrectos se mandan alertas o errores a la consola. 
-# Es esta probablemente, la parte más larga del ejercicio.
+# Es esta, probablemente, la parte más larga del ejercicio.
 
 # Ejercicios 1.x 
 # Estos ejercicios están orientados al manejo de los métodos y propiedades de las string (cadenas de texto). 
@@ -196,4 +196,25 @@ listener "voicesChanged" en el que se debe almacenar las voces disponibles. Por 
 al selector. Se asigna la voz al speech que coincida con la del selector. Se debe asignar un evento click al botón de leer en el que el contenido del mensaje sea el que se encuentra en el textarea y 
 finalmente se indica al speech el mensaje que deberá leer. 
 
+# JavaScript AJAX - CRUD
+Se realiza un CRUD con cada tipo de petición: 
+* crud_ajax.html -> XMLHtttpRequest
+* crud_axios.html -> Axios, Async - Await
+* crud_fetch.html -> Fetch, Async - Await
+  Además, se agrega un documento db.json a fin de simularlo como un API local y el cuál será el modificado por los documentos CRUD.
+  Todos los ejercicios se encuentran en el archivo html, es decir, que el código JavaScript será encontrado al final del body bajo las etiquetas <script>. De igual forma ocurre con los estilos CSS usados.
+  Todos los estilos se encuentran en el head, bajo la etiqueta <style>.
+
+# crud_ajax.html 
+En este programa, todos los pasos para crear una petición ajax se encuentran encapsulados en la función expresada "ajax" cuyo parámetro son la destructuración de options, por tanto, para una correcta ejecución se debe recibir un objeto con: url, method, success, error, data al momento de llamar la función. Esto ocurre cuando se consultan todos los datos con la función expresada "getAll". Debe observarse que al tratarse de una consulta el objeto data es nulo y la información es mostrada al usuario por la técnica de template. La función "getAll" es ejecutada a la carga del documento. 
+
+Nota: es importante recordar que para la ejecución de este conjunto de archivos, se debe tener instalado node.js en conjunto con json-server y levantar el archivo db.json en el servidor local. 
+
+La ejecución del submit del formulario para agregar un nuevo usuario crea una petición ajax de tipo POST, lo que permitirá agregar un nuevo usuario al db.json con los datos que mantenga la propiedad data del objeto de opciones. En caso de éxito, la página debe ser recargada para mostrar el nuevo elemento en la impresión de los usuarios. 
+
+Por otro lado, para editar (update) o eliminar (delete) usuarios, las peticiones ajax son ejecutadas cuando se da click al botón respectivo de cada acción. Es importante resaltar que la ruta a la que se haga la petición dependerá del id del usuario que se desee modificar o eliminar. 
+
+Nota: tome en cuenta que el proceso de petición en cada archivo y la forma de modificar los datos (básicamente el algoritmo de programación) es el mismo para los tres casos presentados, simplemente se respetan las comodidades y necesidades de cada método para su ejecución. 
+Por ejemplo, a diferencia de XMLHttpRequest, el método axios nos brinda la respuesta en formato json por autómatico, por lo que no es necesario hacer la conversión. Esta y que a diferencia de la anterior, esta metodología es útil con funciones asíncronas y try-catch. Sin embargo, al revisar el código la metodología es simplemente la misma. 
+Lo mismo ocurre con crud_fetch.html, siguen la misma metodología para la aplicación CRUD, pero a diferencia de los métodos anteriores, fetch trae consigo el método .json() capaz de convertir la respuesta en este formato, además de throw que permite guiar el flujo de la función hacia el catch en caso de que puedan existir errores. En esta metodología con fetch, también se vio el uso de funciones asíncronas a fin de cargar toda la información correctamente y evitar el rompimiento del código en su ejecución. Además, fetch permite enviar a la petición como segundo parámetro un objeto de options en donde se específican las cabeceras, el método CRUD y la data (body), en este caso, los datos deben ser convertivos a formato json utilizando el método stringify. 
 
