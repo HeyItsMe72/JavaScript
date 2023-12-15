@@ -216,5 +216,134 @@ Por otro lado, para editar (update) o eliminar (delete) usuarios, las peticiones
 
 Nota: tome en cuenta que el proceso de petición en cada archivo y la forma de modificar los datos (básicamente el algoritmo de programación) es el mismo para los tres casos presentados, simplemente se respetan las comodidades y necesidades de cada método para su ejecución. 
 Por ejemplo, a diferencia de XMLHttpRequest, el método axios nos brinda la respuesta en formato json por autómatico, por lo que no es necesario hacer la conversión. Esta y que a diferencia de la anterior, esta metodología es útil con funciones asíncronas y try-catch. Sin embargo, al revisar el código la metodología es simplemente la misma. 
-Lo mismo ocurre con crud_fetch.html, siguen la misma metodología para la aplicación CRUD, pero a diferencia de los métodos anteriores, fetch trae consigo el método .json() capaz de convertir la respuesta en este formato, además de throw que permite guiar el flujo de la función hacia el catch en caso de que puedan existir errores. En esta metodología con fetch, también se vio el uso de funciones asíncronas a fin de cargar toda la información correctamente y evitar el rompimiento del código en su ejecución. Además, fetch permite enviar a la petición como segundo parámetro un objeto de options en donde se específican las cabeceras, el método CRUD y la data (body), en este caso, los datos deben ser convertivos a formato json utilizando el método stringify. 
+Lo mismo ocurre con crud_fetch.html, siguen la misma metodología para la aplicación CRUD, pero a diferencia de los métodos anteriores, fetch trae consigo el método .json() capaz de convertir la respuesta en este formato, además de throw que permite guiar el flujo de la función hacia el catch en caso de que puedan existir errores. En esta metodología con fetch, también se vio el uso de funciones asíncronas a fin de cargar toda la información correctamente y evitar el rompimiento del código en su ejecución. Además, fetch permite enviar a la petición como segundo parámetro un objeto de options en donde se específican las cabeceras, el método CRUD y la data (body), en este caso, los datos deben ser convertivos a formato json utilizando el método stringify.
+
+# JavaScript Ejercicios Ajax - APIs
+Todos estos ejercicios están hechos principalmente en html. Debe notarse que la programación javascrip se encuentra dentro de las etiquetas <scrip> al termino del body. 
+
+# sitio-ajax.html
+A fin de generar un sitio single page dinámico, se utilizan las peticiones XMLHttpRequest para sustituir el contenido en la etiqueta <main>, pues en este html los únicos contenidos constantes son la barra de navegación y el footer. Los archivos que son llamados en las peticiones para susutituir el contenido correspondiente en la etiqueta main están almacenados en la subcarpeta assets: home.html, acerca.html, servicios.html y contacto.html 
+
+# include-html.html
+A diferencia del ejercicio anterior, en este el html principal se mantiene casi vacío, pues se buscar hacer una sustitución total de las secciones, no sólo un relleno de etiquetas. Para empezar, ya que se necesita que al cargar el contenido, se obtengan las rutas de todos los archivos que serán agregados, en este caso se hace útil el atributo data-include, el cual genera la ruta para poder cargar el header y el footer. Esto viene realizado en el archivo include-html.js 
+Una vez que este contenido ha cargado y se ejecuta nuevamente el evento DOMContentLoaded, la lógica es prácticamente la misma al ejercicio anterior, sustituyendo el contenido de la etiqueta <main>. 
+Los archivos necesarios para la carga del header y el footer al inicio del documento, se encuentran en la subcarpeta assets: header.html, footer.html e include-html.js
+
+NOTA: Cada elemento que quiera sustituirse (bajo cualquier etiqueta válida del html) se puede realizar con el data-include cuyo valor debe ser la url del archivo sustituto. 
+En include-html.js, por cada data-include encontrado se ejectura la función includeHTML(), la cual incluye todos los pasos para un XMLHttpRequest. 
+
+# uploader.html
+Este archivo utiliza php para la manipulación y almacenamiento del archivo en el "servidor" utilizando la función move_upload_file. Por tanto, el archivo debe ser ejecutado en el localhost XAMPP. 
+En el código javascript, además de crear el XMLHttpRequest y sus pasos de petición, se crea un form virtual, esto a fin de enviar la información del archivo subido al php, todo esto es ejecutado en la función expresada "uploader".
+Por otra parte, la función progressUpload, permite que, por cada archivo subido, se cree una barra de progreso y un span que indique el nombre y el progreso en porcentaje. De igual modo, para lograr el objetivo, se crea un fileReader que permita leer el total del peso y el avance de cada archivo. Se le añade un listener al fileReader capaz de definir el progreso. 
+Cuando el archivo termine de ser cargado, el evento "loadend" es lanzado, permitiendo limpiar la pantalla (haciendo uso del setTimeout) y ejecuta la función uploader, permitiendo dirigir los archivos subidos al "servidor". 
+
+# uploader-drag-drop.html 
+Existen algunas diferencias entre este ejercico y el anterior, sin embargo, las modificaciones no son implicadas directamente en las funciones que nos permitían subir el archivo al "servidor" ni la impresión de las barras de progreso. Las modificaciones comienzan con la eliminación del input y sustitución por un área de arrastre (clase drop-zone). Para realizar el ejercicio, se utiliza el API drag and drop de los navegadores. 
+
+Se utilizan los siguientes eventos a fin de dar estilos a la drop-zone cual se detectan los archivos: 
+ - dragover: detecta cuando se arrastra un archivo sobre el área.
+ - dragleave: detecta cuando el archivo ha salido del área de arrastre.
+ - drop: detecta cuando el archivo se ha soltado.
+El evento drop arroja un objeto entre cuyas propiedades se incluye dataTransfer.files, con esta propiedad se hacen las barras de progreso y se carga el archivo. 
+
+NOTA: No se utiliza la delegación de eventos porque se busca que sólo un área específica sea la apropiada. 
+
+# contact-form.html 
+Para realizar este ejercicio, se reutilizó el form hecho en los ejercicios del DOM (validaciones_formulario.js). En este ejercicio del DOM, se utilizó el "tras bambalinas" de todo el proceso de formSubmit, pero ahora se utilizó su API, a fin de evitar el captcha que generaba el formsubmit. 
+Para realizar la petición se utilizó fetch, que básicamente se divide en lo siguiente: 
+ - fecth(urlPeticion, options)
+ - then(validación de la respuesta)
+ - then(manejo de la respuesta)
+ - catch(manejo de los errores) 
+En este ejercicio, nuevamente se hace uso del loader.png, cuando el email es enviado, el loader desaparece y en su lugar el usuario visualiza un mensaje de éxito o error.
+
+# contact-form-php.html, send-mail.php 
+Este ejercicio se ejecuta utilizando el mismo formulario del ejercicio del DOM. A diferencia del anterior, este busca tener mayor interacción backend utilizando PHP, evitando utilizar el API de formSubmit. 
+PHP: 
+   La ejecución de todo el programa está condicionada a que exista la petición $_POST (es decir, se ejecute el submit del formulario). 
+   1. Todas las variables del formulario son llevadas a variables PHP para facilitar la concatenación. PHP maneja un objeto S_SERVER en donde se almacenan varias propiedades del servidor, en este caso se accede a HTTP_HOST que sirve para acceder al dominio de donde se hace el envío del formulario.
+   2. La función mail() es la que ejecuta PHP para hacer envío email. Las cabeceras sirven para modificar la respuesta del servidor y que no lleguen en texto plano. La ejecución (o no) de mail() lanzará un true or false, según sea el caso:
+      * Si la respuesta es true, se mando un objeto a la consola y un mensaje de éxito a la pantalla del usuario.
+      * Si la repsuesta es false, ocurre el mismo efecto con un mensaje distinto.
+# CORS 
+Para que el intercambio de emails entre servidores distintos funcione, se deben seguir reglas del CORS. Para esto, se utiliza en JavaScript, en el objeto de options, la propiedad "mode: cors". Esto permite que se de el intercambio de información entre distintos servidores. Además, esto debe expresarse en el php, añadiendo la cabecera: header("Access-Control-Allow-Origin": *); esto permite que cualquier tipo de dominio pueda realizar pedidos al servidor. Puede modificarse específicando el servidor o servidores de los cuales se permiten las peticiones.
+
+# stripe-checkout.html, stripe-checkout.js, stripe-keys.js 
+Este es el primer ejercicio en el que se interactúa tanto con un api externa (no propia de los navegadores). Por lo que se sugiere: -Revisar la documentación de la API Stripe- 
+Para comenzar, todas las transacciones serían hechas fuera del sitio principal (el que creamos) y serán hechas y validadas por stripe. Stripe en escencia necesita de dos url: dirección en caso de éxito y en caso de error. 
+Para comenzar a utilizar esta API es necesario conocer que primero se necesita tener una cuenta en stripe y a su vez, tener productos o servicios en la cuenta. Stripe te genera dos llaves: la pública y privada. Estas llaves son necesarias para poder acceder a los productos que ofreces y que las transacciones puedan ser realizadas. 
+Por cada producto y precio dado al producto, se genera un id que nos permitirá identificarlo y acceder a él. 
+
+Para mostrar los productos que nuestra cuenta ofrece, se utiliza la técnica de templates, a fin de hacer una única inserción al DOM y ahorrar memoria. 
+Se debe tomar en cuenta que el api que accede a los productos, no arroja el precio en su objeto de respuesta, por lo que se debe consultar el api de precios y enlazar ambos a través del id del prodcuto. 
+Para evitar realizar una petición fetch tras otra, se utiliza el método .promiseAll(), el cual contiene todas las promesas; cuando estas sean devueltas arrojará un sólo objeto único. 
+
+Es importante que en este, como en cualquier otro uso de APIs, es importante revisar su forma de uso, sus endpoints y, por supuesto, explorar su objeto de respuesta json. Esto nos facilitará la forma de acceder a la información que cada API nos proporciona y manipular los datos como mejor nos convenga, por esto es que se señala: 
+ - Para que el precio se muestre correctamente, debe modificarse el string que proviene de unit_amount_decimal, utilizando el método slice.
+   
+Finalmente, el evento de redireccionamiento, debe ser realizado fuera de las promesas. De este modo, al dar click en la compra de cualquiera de nuestros productos, se invoca a srtipe. En esta sección del programa, debe entenderse que no se hace más que seguir la documentación de stripe. 
+
+# blog-markdown.html 
+NOTA: la programación de este documento da por hecho que ya se tiene un archivo de extensión .md (markdown) a fin de que pueda ser utilizado y renderizado a html. 
+Markdown es un lenguaje de marcado de texto que sirve para facilitar la escritura del contenido html de los sitios, sobre todo los de tipo blog. 
+Showdown es una librería que permite compilar los archivos markdown a etiquetas de html para que sea renderizado en el navegador. 
+1. Descargar la librería o llamar el cdn de showdown (esto último fue lo que se hizo en el archivo).
+2. realizar el request fetch al archivo markdown.
+
+# api-pokemon.html 
+NOTA: REVISAR DOCUMENTACION DEL API PARA MAS INFORMACION. 
+El API de pokemon devuelve en cada consulta 20 resultados con el link de los siguientes 20 resultados (next) y los 20 anteriores (previous, de aplicar). Además, por cada uno se puede obtener el nombre, poderes, apariciones, etc., utilizando el ide del pokemon en el url. 
+Ya que cada pokemon es mostrado, se utilizan funciones asíncronas capaces de esperar la respuesta de cada pokemon. Además, se utiliza un ciclo for que es hasta cierto grado, bloqueante; no ejecutará el siguiente ciclo hasta que el anterior se haya completado. Este es un comportamiento que no está en forEach().
+
+Después d eincluir a main el contenido del template (los pokemons), damos el valor a $prevLink y $nextLink; al dar click en siguiente o antes, se debe ejecutar la función asíncrona con la url correspondiente, según el contenido. 
+
+# api-tv-shows.html 
+Este es un archivo que genera un buscador de programas de televisión de estados unidos utilizando el api de TV Maze. 
+Es importante revisar la documentación de las APIs. este código se extiende porque hay posibilidades de que en su respuesta, no existan propiedades que son utilizadas (image, description), y de ser así, el código se rompe. Además, si no existen coincidencias de búsqueda, el api arroja un objeto vacío, pero no errores. En este programa se utilizan operadores ternarios para validar y asegurar el contenido del template. 
+1. Obtener del DOM el espacio para $shows, $template y el $fragmento.
+2. Añadir el listener. Todas las consultas serán hechas cuando la tecla "enter" haya sido presionada.
+
+# api-canciones.html 
+Aunque las APIs utilizadas en este ejercicio ya no se encuentran disponibles (consultar documentación) es un buen ejercicio para practicar. 
+Toda la programación es ejecutada cuando se realiza el submit del form. Al utilizar dos apis distintas, se utiliza la destructuración, ya que no se sabe cuál responderá primero; tambiém se utilizan funciones asíncronas.
+
+# selects-anidados.html
+En este ejercicio, se utiliza un API de COPOMEX. Ya que está limitada a 50 consultas, se ha realizado con los endpoints de prueba proporcionados por la documentación. Una vez realizado el ejercicio, se puede cambiar el token de prueba por el token de usuario. 
+En el html se hacen los selectores de Estado, Municipio y C.P. 
+La función de cargar estado será ejecutada al cargar el documento. Cargar los municipios dependerá de lo que se seleccione en estado. Finalmente, el c.P. cargará cuando el municipio sea elegido. 
+
+# wp-api-rest.html 
+WordPress tiene un api para desarrolladores que permite acceder (de ser posible) al frontend de los sitios creados en él. En la documentación se explican los endpoints. 
+La petición fetch lanza el json utilizando /wp-json/endpoint. El json lanza información del sitio, como los namespaces, referidos a los plugins instalados en el sitio, título, y el root, que son todos los accesos que ofrece el sitio para obtener información. 
+
+A fin de simplificar las peticiones fetch, se crean variables que dependiendo del endpoint se genera la URL. Se crean 2 funciones: getSiteData y getPosts. La primera funciona para traer los datos del sitio web, como el nombre, descripción, url, etc., e imprimirlos en la pantalla. La respuesta deber ser convertida a json a fin de poder acceder a sus datos.
+
+Utilizar ?_embed en la petición de la consulta POSTS, permite que la api regrese información más extensa.
+Se comienza a hacer el llenado del template en la función getPosts(). Por cada elemento traído del json, se imprime la imagen y título. 
+Se debe recordar que para acceder a los elementos, además de la notación punto, existe el método de corchetes, accediendo a ellos como si se tratara de un array. 
+
+Hay que recordar que al utilizar la técnica de templates, se debe clonar el nodo y este clon añadirlo como hijo al fragmento del DOM. Finalmente, hacer una única inserción del fragmento. 
+
+Se continua con la carga de información, todo se basa en seguir la ruta de la API en json y llevarl al DOM por medio del template. Para el caso de las categorías y los tags, se utilizó un .forEach en el que cada elemento se agrega a lo que ya se tenía en la varibale, esto a modo de list item (li). Finalmente, al tener el forEach completo, se agrega al selector del template correcto. 
+Para saber qué ruta del elemento (endpoint del api) seguir, es importante revisar la estructura del json. 
+
+Para realizar el efecto del scroll infinito, hay que tomar en cuenta 2 consideraciones: el evento "scroll" y el API. En el caso del API de WordPress, navegar entre los resultados puede resolverse con los atributos page y per_page. Estos atributos señalan la ágina y la cantidad de resultados mostrados por página, por lo que deben ser agregados a la url de la petición fetch. La forma de editar cada variable (page & perPage) radica en la primera consideración: el scroll. 
+
+Este evento es asignado al window y se destructuran 3 propiedades: 
+   - scrollTop: distancia desde el top hasta el scroll navegado.
+   - scrollHeight: distancia desde el top al final del HTML.
+   - clientHeight: distancia total de la pantalla visible del cliente.
+Cuando la suma del scrollTop con el clientHeight sea superior o igual al scrollHeight, debe pasar lo siguiente:
+   * Aumentar el número de page para poder hacer el cambio de página.
+   * Invocar la función que permite la petición fetch y la carga del contenido dinámico.
+Al cambiar el valor de page, la ruta url de fetch se actualiza y el nuevo contenido es cargado. 
+
+
+
+
+
+
+
+
 
