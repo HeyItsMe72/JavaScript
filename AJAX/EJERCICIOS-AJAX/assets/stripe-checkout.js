@@ -72,13 +72,5 @@ Promise.all([
         }
     })
 
-/*fetch("https://api.stripe.com/v1/products", {
-    headers: {
-        Authorization: `Bearer ${STRIPE_KEYS.secret}`,
-    }
-}).then((res) => {
-    return res.json(); 
-}).then(json => console.log(json));
-*/
  
 
