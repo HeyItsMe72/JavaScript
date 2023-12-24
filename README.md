@@ -337,7 +337,29 @@ Este evento es asignado al window y se destructuran 3 propiedades:
 Cuando la suma del scrollTop con el clientHeight sea superior o igual al scrollHeight, debe pasar lo siguiente:
    * Aumentar el número de page para poder hacer el cambio de página.
    * Invocar la función que permite la petición fetch y la carga del contenido dinámico.
-Al cambiar el valor de page, la ruta url de fetch se actualiza y el nuevo contenido es cargado. 
+Al cambiar el valor de page, la ruta url de fetch se actualiza y el nuevo contenido es cargado.
+
+# JavaScript SPA - Single Page Application
+En un SPA se tienen vistas, pero no páginas. Por usabilidad, es una buena práctica hacer el "cambio" de rutas en el URL entre cada navegación de las vistas. Los cambios pueden ser usados gracias al "hash" ("#") de las URL. En los URL el "?" significa un paso de variables. 
+
+Las SPA se programan en JS y las tecnologías backend son irrelevantes (no importa cuál sea usada). En este caso, para el desarrollo de estos ejercicios, el "backend" utilizado es el API de Wordpress, del sitio de Malvestida. Pero se puede replicar para cualquier otro sitio al que se tenga acceso, elaborado con Wordpress. 
+
+Los componentes principales son los más sencillos de entender: 
+# index.html 
+Aquí se genera la maquetación en donde nuestro contenido de vistas cargará dinámicamente. Como se observa, sólo se trata de un único archivo HTML, es el sentido de un SPA. Es bastante sencillo y la mayoría del contenido se encuentra en el header, para importaciones de hoja de estilos CSS (style.css) y los archivos script que a continuación se explican: 
+
+# index.js 
+
+
+En la carpeta de helpers se encuentran archivos que facilitan la ejecución de una función que es repetitiva pero que no tiene relevancia en lo que el usuario debería ver. Aquí se encuentran: 
+
+# wp_api.js - Helper de conexión a API_REST
+A fin de simplificar la conexión al backend (WP API), se definen las contantes con la ruta de cada endpoint utilizado en la aplicación. Se exportan por defecto en forma de objeto. 
+
+# ajax.js - Helper de peticiones AJAX 
+Esta función nos permite simplificar las peticiones y evitar crear una estructura fetch por cada consulta. Se crea la función ajax permitiendo generar las consultas con s+ólo brindar el URL y el callback para manejar la respuesta en caso de éxito (dependiendo del endpoint al que se acceda). Se utiliza la destructuración para asignar las propiedades que será utilizadas como parámetro a la función. A la callback de éxito se le pasa como parámetro la respuesta de la API ya en formato JSON. 
+
+
 
 
 
