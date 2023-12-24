@@ -349,7 +349,12 @@ Los componentes principales son los más sencillos de entender:
 Aquí se genera la maquetación en donde nuestro contenido de vistas cargará dinámicamente. Como se observa, sólo se trata de un único archivo HTML, es el sentido de un SPA. Es bastante sencillo y la mayoría del contenido se encuentra en el header, para importaciones de hoja de estilos CSS (style.css) y los archivos script que a continuación se explican: 
 
 # index.js 
+Es el archivo script único que aparece importado en el index.html, da estructuración a todos nuestros archivos de código JS, importando únicamente dos archivos: app.js y wp_api.js
+En el archivo se notan dos escuchadores de eventos, el primero sirve para hacer la carga del documento mediante el archivo app.js (que adelante se explica) y el segundo es un evento que ayudará a la función de scroll infinito y al cambio del "#" permitiendo que el contenido correspondiente a la vista sea cargado. 
 
+# app.js 
+Este archivo contiene la función App la cual nos permite hacer las cargas de las vistas correspondientes al index.html, utilizando los componentes que se exponen a continuación. Es básicamente, donde se agregan los hijos al html: header, main y loader, el cual es utilizado hasta que la información de la API esté lista para ser mostrada. 
+La línea $root.innerHTML = null; permite limpiar la vista antes de hacer la carga de la siguiente navegación, de forma que no se sobreescriba el contenido de Header, pues se debe recordar que la función app es ejecutada cada vez que el "#" cambia, a fin de mostrar el contenido perteneciente a esa ruta. 
 
 En la carpeta de helpers se encuentran archivos que facilitan la ejecución de una función que es repetitiva pero que no tiene relevancia en lo que el usuario debería ver. Aquí se encuentran: 
 
@@ -358,6 +363,55 @@ A fin de simplificar la conexión al backend (WP API), se definen las contantes 
 
 # ajax.js - Helper de peticiones AJAX 
 Esta función nos permite simplificar las peticiones y evitar crear una estructura fetch por cada consulta. Se crea la función ajax permitiendo generar las consultas con s+ólo brindar el URL y el callback para manejar la respuesta en caso de éxito (dependiendo del endpoint al que se acceda). Se utiliza la destructuración para asignar las propiedades que será utilizadas como parámetro a la función. A la callback de éxito se le pasa como parámetro la respuesta de la API ya en formato JSON. 
+
+# infinite_scroll.js - High Order Component 
+La aplicación de este infinite scroll tiene la misma lógica que el de la sección de wp API de los ejercciios AJAX. 
+
+Se comienza con el wp_api.js, indicando en el endpoint de POST y SEARCH, la cantidad de resultados por página. Además, se localiza la variable page = 1 a fin de que pueda aumentarse la carga de más resultados, incrementando la variable en uno por fin de scroll. 
+En el index.js se aprecia la variable page = 1, para asegurar que al cambiar el "#", se reinicia el valor de la página y muestre los resultados dependiendo de la locación. 
+
+En app.js la función infiniteScrool debe ser ejecutada cuando el DOM sea cargado, pero ya que App() es la función ejecutada en este evento, es que infiniteScroll debe ser llamda en App(). 
+
+En infinite_scroll.js es donde se encuentra toda la lógica para que funciones. Se utiliza la variable "Component" como un componente de orden superior (High Order Component), a fin de cambiar su estructura dependiendo de la ruta del "#", esto se logra igualándolo a cada función ya sea para un post o para una búsqueda. De esta forma, cuando la petición ajax sea ejecutada, tomará y manejará el objeto JSON recibido según el condicional en el que Component haya sido definido. 
+
+Finalmente, el contenido es insertado al main del index.html 
+NOTA: insertAdjacentHTML se utiliza a fin de no reescribir lo que ya contenía la variable html (es decir, los resultados anteriores ya mostrados) y sólo añadir los nuevos (correspondiente a una nueva petición ajax en una página más: page++). 
+
+# Title.js, Loader.js - Primeros componentes de UI 
+La función Title() modifica el h1 y lo retorna; se utilizan las variables de los endpoints utilizados en wp_api.js para que se pueda consultar a cualquier página elaborada en WP. 
+Mientras que la funcipon Loader simplemente crea una imagen añadiendo la ruta y el alternativo. Ya que ambas funciones utilizan el método createElement, para que sean utilizadas se deben importar en App.js y agregar el nodo al root. 
+
+# SearchForm.js, Menu.js, Header.js - Componente Header 
+Los primeros dos archivos sirven únicamente para crear el contenido dinámico del header. Hay que tomar en cuenta que el método "appendChild" crea todo un nodo al final del último hijo. Por tanto, al crear el searchForm y el menu, se utiliza el método createElement y se retorna la variable donde el elemento ha sido creado. Este contenido deberá ser cargado en el documento Header.js, función que a su vez, retorna el header completo que se agregado en la ejecución de App.js 
+
+Sirve para crear el form dinámico, además inicia los eventos permitiendo añadir o remover la variable wpSearch del localStorage. Además, permite modificar el URL añadiendo al # la búsqueda del usuario (el valor del input). 
+
+# Main.js, PostCard.js - Renderizado dinámico 
+La función de Main permite crear una sección main vacía en el index.html en donde cada post será almacenado. La funcipón PostCard será la encargada de crear cada artículo y destructurar sus propiedades de modo que se pueda utilizar para crear el post. Accede a la URL de las imágenes, el título del Post y la fecha de publicación, así como el contenido de la nota. 
+
+# Router.js - Enrutamiento 
+En este archivo se hacen las peticiones ajax que permiten acceder a los posts. Se hace uso de if- else if - else para identificar: 
+   * Si la locación actual es home (# o no #).
+   * Si el # de la locación actual es el buscador ("#/search"), ya que se debe pasar el query del cliente. Esto hace que no sea estática y se utiliza el método .includes().
+   * Si el # no corresponde a ningún caso anterior (ningún url controlable). En este caso recaen los posts a los que se accede bajo "Ver publicación".
+Sirve para generar las peticiones ajax, de forma que se puedan obtener los arreglos de las coincidencias y manipular la información obtenidda (cbSuccess).
+
+# Post.js - Vista del post actual 
+En la función Posts se destructuran las propiedades que el contenido innerHTML utilizará para plasmar la información en pantalla. Esta función es ejecutada en el Router; para hacer la petición se utiliza el slug, a fin de obtener un único arreglo que pertenece al post seleccionado. De esta forma, cuando la petición es exitosa, el json obtenido es parametrizado con la función Post, que será la encargada de plasmar la información.
+
+NOTA: A fin de optimizar el código, se utilizan funciones asíncronas en Router.js y ajax.js, de esta forma el código esperará a que la petición sea realizada y se plasmará el contenido adecuado según el enrutamiento. 
+
+# SearchCard.js - Vista de la búsqueda actual 
+Ya que se han realizado las peticiones, se deben imprimir en pantalla los resultados. La función SearchCard permite destructurar las propiedades del objeto arrojado por la petición ajax, retorna el escrito html que permite darle estructura a cada resultado de búsqueda. 
+
+En su parte, main agrega un condicional en que todas aquellas rutas han sido diferentes del #/search se mostrarán en formato grid. 
+Es en Router.js donde se aplica la vista. Si el objeto arrojado al realizar la búsqueda está vacío, se lanza un error. Pero en caso de existir, por cada post obtenido se agrega al html pasándose por la función SearchCard para finalmente añadirse al main del index.html
+
+# ContactForm.js - Styled Components, & Sinfle File Components 
+Single File Components es una técnica de Vue.js en la que se pretende que todo el contenido (estilos, scripts, html) se encuentre en un sólo archivo. Esto ocurre con ContactForm.js, sólo que el contenido es cargado al index.html de forma dinámica. 
+Todo el contenido (form, estilos y scripts) son reutilizados de contact-form.html de los ejercicios AJAX. 
+Para evitar errores, se utiliza un setTimeOut a la ejecución de la función ContactFormValidations, esto a fin de mandar al final de todas las cargas, su ejecución. Así, al llenar el formulario, no mostrará errores, como si se tratara de elementos inexistentes. 
+
 
 
 
