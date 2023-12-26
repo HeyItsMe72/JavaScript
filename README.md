@@ -407,19 +407,44 @@ Ya que se han realizado las peticiones, se deben imprimir en pantalla los result
 En su parte, main agrega un condicional en que todas aquellas rutas han sido diferentes del #/search se mostrarán en formato grid. 
 Es en Router.js donde se aplica la vista. Si el objeto arrojado al realizar la búsqueda está vacío, se lanza un error. Pero en caso de existir, por cada post obtenido se agrega al html pasándose por la función SearchCard para finalmente añadirse al main del index.html
 
-# ContactForm.js - Styled Components, & Sinfle File Components 
+# ContactForm.js - Styled Components, & Single File Components 
 Single File Components es una técnica de Vue.js en la que se pretende que todo el contenido (estilos, scripts, html) se encuentre en un sólo archivo. Esto ocurre con ContactForm.js, sólo que el contenido es cargado al index.html de forma dinámica. 
 Todo el contenido (form, estilos y scripts) son reutilizados de contact-form.html de los ejercicios AJAX. 
 Para evitar errores, se utiliza un setTimeOut a la ejecución de la función ContactFormValidations, esto a fin de mandar al final de todas las cargas, su ejecución. Así, al llenar el formulario, no mostrará errores, como si se tratara de elementos inexistentes. 
 
+# Reactividad en JavaScript
+Cuando los datos en un sitio o aplicación son modificados a partir de los datos de la lógica de programación, modificando el contenido de la UI se le llama reactividad de los datos.
 
+Cuando nos referimos al estado, hablamos de un conjunto de datos en un momento en particular del flujo del sitio o app. Esto es lo que genera la programación orientada a componentes. 
 
+Un componente es un patrón visual repetido que puede ser resumido en un fragmento de código independiente: html, css, y/o js, que cumplen una función única y son reutilizables e independientes tanto de su contexto como del resto de los componentes, por lo que puede ser aislado y seguir funcionando. También son autocontenidos, nofiltran estilos, ni funcionalidad a otros componentes. 
+En esta sección se realizan ejercicios que explican el comportamiento de la reactividad en JS y cómo es que funcionan estos frameworks detrás de cámaras con vanilla JS. 
 
+# 00_dom-manipulacion.html
+Se crea un todo-list con un form, y sus inputs. La creación y manipulación es la misma que en los ejercicios DOM. 
+   * Obtener las variables del DOM.
+   * Crear el listener del cuento.
+   * Prevenir el documento por defecto.
+   * Agregar item a la lista.
+   * Añadir el nodo a HTML.
+   * Limpiar el input.
 
+# 01_UI-basada-estado.html 
+Se define al estado como un objeto en el que todoList es un arreglo vacío. El template es el encargado de retornar la lista de tareas o el mensaje de lista vacía. Mientras tanto, el renacer permite añadir lo que contiene el template (las tareas) al nodo del HTML. Cuando el DOM ha cargado, la función render es ejecutada. Cuando el submit es lanzado el estado es actualizado y renderizado. 
 
+# 02_reactividad-estado.html
+En el ej. 01 el estado se actualizaba de forma manual, utilizando el método push para agregar nuevos elementos a la lista. Para actualizar el estado de forma reactiva, se crea la función setState, la cual recibe un objeto en el que compara que la(s) llave(s) del objeto pasado y la del objeto declarado state. Si la llave coincide, el objeto state es actualizado con los nuevos valores de la llave del objeto parametrizado. 
+Por esto, al establecer valores por defecto y añadir el objeto parametrizado una llave que no está incluída en el state declarado, la función ignorará por completo esta llave.
+Ahí radica la importancia de incluir en el estado todos las variables que la app pueda necesitar para ser actualizada. Sin embargo, a este punto, el estado no es inmutable, pues aún se le pueden añadir tareas de forma manual creando una copia y añadiéndola directamente al estado. 
 
+# 03_estado-inmutable.html
+Para volver inmutable al estado, se crea una copia de este, para que la única forma de acceder al estado original, sea mediante la función setState().
+Para actualizar el estado de forma reactiva al añadir más tareas se genera la copia al último estado, y a esta copia se agrega el nuevo item. 
+Finalmente, se ejecuta el setState que actualiza el estado original con los valores de la última copia modificada. 
 
+# 04_componentes-con-estado.html 
+Se considera ahora al state declarado como un estado global, así que se crea un template UI que sustituirá al estado local. En su propiedad data se agregan y modifican las tareas mientras que el estado global se mantiene intacto. 
 
-
-
-
+# 05_libreria-componentes-con-estado.html, Component.js
+A fin de simplificar la lógica y mejorar el código, se crea el component. En esta función anónima autoejecutable, se crea un constructor que permita reutilizar el componente. En él, se incluyen el método render, setState y getState que siguen la misma l+ogica de programación del archivo anterior. Este constructor es utilizado en el html parametrizando las propiedades que el constructor utiliza. 
+Ahora las invocaciones de los métodos tienen que específicar que son propias del constructor. 
